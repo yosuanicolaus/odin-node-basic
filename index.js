@@ -1,31 +1,33 @@
-const http = require("http");
+const express = require("express");
+const app = express();
 const fs = require("fs");
 
-function getFile(path) {
-  switch (path) {
-    case "/":
-      return "index.html";
-    case "/about":
-      return "about.html";
-    case "/contact-me":
-      return "contact-me.html";
-    default:
-      return "404.html";
-  }
-}
+app.get("/", (req, res) => {
+  fs.readFile("index.html", "utf-8", (err, data) => {
+    if (err) return console.log(err.message);
+    res.send(data);
+  });
+});
 
-http
-  .createServer((req, res) => {
-    const file = getFile(req.url);
-    fs.readFile(file, "utf-8", (err, data) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
+app.get("/about", (req, res) => {
+  fs.readFile("about.html", "utf-8", (err, data) => {
+    if (err) return console.log(err.message);
+    res.send(data);
+  });
+});
 
-      res.statusCode = 200;
-      res.setHeader("Content-Type", "text/html");
-      res.end(data);
-    });
-  })
-  .listen(3000);
+app.get("/contact-me", (req, res) => {
+  fs.readFile("contact-me.html", "utf-8", (err, data) => {
+    if (err) return console.log(err.message);
+    res.send(data);
+  });
+});
+
+app.get("*", (req, res) => {
+  fs.readFile("404.html", "utf-8", (err, data) => {
+    if (err) return console.log(err.message);
+    res.send(data);
+  });
+});
+
+app.listen(3000);
